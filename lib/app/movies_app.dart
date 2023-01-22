@@ -11,7 +11,6 @@ class MoviesApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: Routes.splash,
       routes: appRoutes,
-      home: const Scaffold(),
     );
   }
 }
