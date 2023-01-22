@@ -1,13 +1,13 @@
-import 'dart:io';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../../domain/repository/connectivity_repository.dart';
+import '../service/remote/internet_checker.dart';
 
 class ConnectivityRepositoryImpl implements ConnectivityRepository {
   final Connectivity _connectivity;
+  final InternetChecker internetChecker;
 
-  ConnectivityRepositoryImpl(this._connectivity);
+  ConnectivityRepositoryImpl(this._connectivity, this.internetChecker);
 
   @override
   Future<bool> get hasInternet async {
@@ -15,15 +15,6 @@ class ConnectivityRepositoryImpl implements ConnectivityRepository {
     if (result == ConnectivityResult.none) {
       return false;
     }
-    return _hasInternet();
-  }
-
-  Future<bool> _hasInternet() async {
-    try {
-      final list = await InternetAddress.lookup('google.com');
-      return list.isNotEmpty && list.first.rawAddress.isNotEmpty;
-    } catch (e) {
-      return false;
-    }
+    return internetChecker.hasInternet();
   }
 }

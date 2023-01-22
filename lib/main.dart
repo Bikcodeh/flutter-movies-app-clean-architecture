@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 
 import 'app/data/repository/authentication_repository_impl.dart';
 import 'app/data/repository/connectivity_repository_impl.dart';
+import 'app/data/service/remote/internet_checker.dart';
 import 'app/domain/repository/authentication_repository.dart';
 import 'app/domain/repository/connectivity_repository.dart';
 import 'app/movies_app.dart';
 
 void main() {
   runApp(Injector(
-    connectivityRepository: ConnectivityRepositoryImpl(Connectivity()),
+    connectivityRepository: ConnectivityRepositoryImpl(
+      Connectivity(),
+      InternetChecker(),
+    ),
     authenticationRepository: AuthenticationRepositoryImpl(),
     child: const MoviesApp(),
   ));
