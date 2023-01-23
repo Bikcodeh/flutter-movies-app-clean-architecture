@@ -13,7 +13,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   AuthenticationRepositoryImpl(this._flutterSecureStorage);
 
   @override
-  Future<User?> getUserData() => Future.value(null);
+  Future<User?> getUserData() => Future.value(User());
 
   @override
   Future<bool> get isSignedIn async {
@@ -32,6 +32,8 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     if (username != 'test' && password != '12345') {
       return Either.left(Failure.notFound);
     }
+
+    await _flutterSecureStorage.write(key: _key, value: 'session');
     return Either.right(User());
   }
 }
