@@ -1,1 +1,7 @@
-enum Failure { notFound, unauthorized, unknown, http }
+enum Failure {
+  notFound,
+  unauthorized,
+  unknown,
+  server,
+  connectivity,
+}
