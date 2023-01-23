@@ -4,13 +4,18 @@ import '../../domain/common/either.dart';
 import '../../domain/common/error.dart';
 import '../../domain/models/user.dart';
 import '../../domain/repository/authentication_repository.dart';
+import '../service/remote/authentication_api.dart';
 
 const _key = 'session_id';
 
 class AuthenticationRepositoryImpl implements AuthenticationRepository {
   final FlutterSecureStorage _flutterSecureStorage;
+  final AuthenticationApi _authenticationApi;
 
-  AuthenticationRepositoryImpl(this._flutterSecureStorage);
+  AuthenticationRepositoryImpl(
+    this._flutterSecureStorage,
+    this._authenticationApi,
+  );
 
   @override
   Future<User?> getUserData() => Future.value(User());
@@ -26,6 +31,8 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     String username,
     String password,
   ) async {
+    final token = await _authenticationApi.createRequestToken();
+    print(token);
     await Future.delayed(
       const Duration(seconds: 2),
     );
