@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../domain/common/either.dart';
@@ -18,12 +19,12 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   );
 
   @override
-  Future<User?> getUserData() => Future.value(User());
+  Future<User?> getUserData() => Future.value(null);
 
   @override
   Future<bool> get isSignedIn async {
     final sessionId = await _flutterSecureStorage.read(key: _key);
-    return sessionId != null;
+    return false;
   }
 
   @override
@@ -32,7 +33,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     String password,
   ) async {
     final token = await _authenticationApi.createRequestToken();
-    print(token);
+    debugPrint(token);
     await Future.delayed(
       const Duration(seconds: 2),
     );

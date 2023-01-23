@@ -14,7 +14,9 @@ class Either<Left, Right> {
   }
 
   Result fold<Result>(
-      Result Function(Left) left, Result Function(Right) right) {
+    Result Function(Left) left,
+    Result Function(Right) right,
+  ) {
     if (isLeft) {
       return left(_left as Left);
     } else {

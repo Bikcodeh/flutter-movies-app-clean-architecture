@@ -1,8 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:http/http.dart';
 
+import '../../../domain/common/network.dart';
 import '../../utils/constants.dart';
 
 class AuthenticationApi {
@@ -11,14 +9,15 @@ class AuthenticationApi {
   AuthenticationApi(this._client);
 
   Future<String?> createRequestToken() async {
-    final response = await _client.get(
+    final request = _client.get(
       Uri.parse(
           '${Constants.baseUrl}/authentication/token/new?api_key=${Constants.apiKey}'),
     );
-    if (response.statusCode == HttpStatus.ok) {
-      final json = Map<String, dynamic>.from(jsonDecode(response.body));
-      return json['request_token'];
-    }
-    return null;
+    final result = await safeApiCall(request);
+    return result.fold<String?>((_) {
+      return null;
+    }, (jsonMap) {
+      return jsonMap['request_token'];
+    });
   }
 }
