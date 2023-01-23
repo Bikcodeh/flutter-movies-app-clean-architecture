@@ -9,4 +9,5 @@ abstract class AuthenticationRepository {
     String username,
     String password,
   );
+  void signOut();
 }

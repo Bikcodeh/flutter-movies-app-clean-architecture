@@ -33,7 +33,7 @@ class _SignInViewState extends State<SignInView> {
                     }))
                   },
                   decoration: const InputDecoration(
-                    labelText: "Username *",
+                    labelText: 'Username *',
                     border: OutlineInputBorder(),
                   ),
                   validator: (String? text) {
@@ -52,7 +52,7 @@ class _SignInViewState extends State<SignInView> {
                   },
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: "Password *",
+                    labelText: 'Password *',
                   ),
                   validator: (String? text) {
                     text = text?.replaceAll(' ', '') ?? '';

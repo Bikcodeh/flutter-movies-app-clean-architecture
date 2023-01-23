@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../domain/common/either.dart';
@@ -33,15 +32,25 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     String password,
   ) async {
     final token = await _authenticationApi.createRequestToken();
-    debugPrint(token);
-    await Future.delayed(
-      const Duration(seconds: 2),
-    );
-    if (username != 'test' && password != '12345') {
-      return Either.left(Failure.notFound);
+
+    if (token == null) {
+      return Either.left(Failure.unknown);
     }
 
+    final result = await _authenticationApi.createSessionWithLogin(
+      username: username,
+      password: password,
+      requestToken: token,
+    );
     await _flutterSecureStorage.write(key: _key, value: 'session');
-    return Either.right(User());
+    return result.fold(
+      (failure) => Either.left(failure),
+      (_) => Either.right(User()),
+    );
+  }
+
+  @override
+  void signOut() async {
+    await _flutterSecureStorage.delete(key: _key);
   }
 }
