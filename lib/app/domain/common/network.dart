@@ -108,6 +108,7 @@ class Http {
       logs = {
         ...logs,
         'statusCode': response.statusCode.toString(),
+        'responseBody': response.body.toString(),
       };
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return Either.right(onSuccess(response.body));
