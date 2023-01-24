@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import '../../../domain/common/either.dart';
 import '../../../domain/common/http/error.dart';
 import '../../../domain/common/http/network.dart';
@@ -13,8 +11,8 @@ class AuthenticationApi {
   Future<Either<Failure, String>> createRequestToken() async {
     final result = await _http.request<String>('/authentication/token/new',
         onSuccess: ((responseBody) {
-      final jsonMap = Map<String, dynamic>.from(jsonDecode(responseBody));
-      return jsonMap['request_toke'];
+      final jsonMap = responseBody as Map;
+      return jsonMap['request_token'];
     }));
     return result.fold<Either<Failure, String>>((failure) {
       return Either.left(failure);
@@ -28,13 +26,14 @@ class AuthenticationApi {
     required String password,
     required String requestToken,
   }) async {
+    final body = SessionWithLoginRequest(
+      username: username,
+      password: password,
+      requestToken: requestToken,
+    );
     final result = await _http.request<String>(
       '/authentication/token/validate_with_login',
-      body: SessionWithLoginRequest(
-        username: username,
-        password: password,
-        requestToken: requestToken,
-      ),
+      body: body.toMap(),
       method: HttpMethod.post,
       onSuccess: (responseBody) {
         final jsonMap = responseBody as Map;

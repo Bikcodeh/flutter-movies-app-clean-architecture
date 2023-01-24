@@ -9,7 +9,7 @@ class SessionWithLoginRequest {
     required this.requestToken,
   });
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'username': username,
       'password': password,

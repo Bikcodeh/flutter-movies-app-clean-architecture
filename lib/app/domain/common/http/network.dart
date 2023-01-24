@@ -37,14 +37,14 @@ class Http {
     HttpMethod method = HttpMethod.get,
     Map<String, String> headers = const {},
     Map<String, String> queryParameters = const {},
-    Object body = const {},
+    Map<String, dynamic> body = const {},
     bool useApiKey = true,
     required T Function(dynamic responseBody) onSuccess,
   }) async {
     var logs = {
       'startTime': DateTime.now().toString(),
     };
-    late StackTrace stackStrace;
+    StackTrace? stackStrace;
     try {
       if (useApiKey) {
         queryParameters = {
@@ -69,10 +69,10 @@ class Http {
       logs = {
         ...logs,
         'url': url.toString(),
-        'body': body.toString(),
         'queryParameters': queryParameters.toString(),
         'headers': headers.toString(),
-        'method': method.toString()
+        'method': method.toString(),
+        'body': body.toString(),
       };
       late final Response response;
       switch (method) {
