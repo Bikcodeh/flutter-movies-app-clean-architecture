@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import '../../../domain/common/either.dart';
-import '../../../domain/common/error.dart';
-import '../../../domain/common/network.dart';
+import '../../../domain/common/http/error.dart';
+import '../../../domain/common/http/network.dart';
 import 'body_request/session_with_login_request.dart';
 
 class AuthenticationApi {
@@ -9,13 +11,15 @@ class AuthenticationApi {
   AuthenticationApi(this._http);
 
   Future<Either<Failure, String>> createRequestToken() async {
-    final result = await _http.request(
-      '/authentication/token/new',
-    );
+    final result = await _http.request<String>('/authentication/token/new',
+        onSuccess: ((responseBody) {
+      final jsonMap = Map<String, dynamic>.from(jsonDecode(responseBody));
+      return jsonMap['request_toke'];
+    }));
     return result.fold<Either<Failure, String>>((failure) {
       return Either.left(failure);
-    }, (jsonMap) {
-      return Either.right(jsonMap['request_token'] as String);
+    }, (token) {
+      return Either.right(token);
     });
   }
 
@@ -24,7 +28,7 @@ class AuthenticationApi {
     required String password,
     required String requestToken,
   }) async {
-    final result = await _http.request(
+    final result = await _http.request<String>(
       '/authentication/token/validate_with_login',
       body: SessionWithLoginRequest(
         username: username,
@@ -32,25 +36,30 @@ class AuthenticationApi {
         requestToken: requestToken,
       ),
       method: HttpMethod.post,
+      onSuccess: (responseBody) {
+        final jsonMap = responseBody as Map;
+        return jsonMap['request_token'];
+      },
     );
     final data = result.fold<Either<Failure, String>>(
       (failure) => Either.left(failure),
-      (jsonMap) => Either.right(jsonMap['request_token']),
+      (token) => Either.right(token),
     );
     return data;
   }
 
   Future<Either<Failure, String>> createSession(String token) async {
-    final result = await _http.request(
-      '/authentication/session/new',
-      body: {
-        'request_token': token,
-      },
-      method: HttpMethod.post,
-    );
+    final result = await _http.request<String>('/authentication/session/new',
+        body: {
+          'request_token': token,
+        },
+        method: HttpMethod.post, onSuccess: ((responseBody) {
+      final jsonMap = responseBody as Map;
+      return jsonMap['session_id'];
+    }));
     return result.fold(
       (failure) => Either.left(failure),
-      (jsonMap) => Either.right(jsonMap['session_id']),
+      (sessionId) => Either.right(sessionId),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../main.dart';
-import '../../../../domain/common/error.dart';
+import '../../../../domain/common/http/error.dart';
 import '../../../routes/routes.dart';
 
 class SignInView extends StatefulWidget {

@@ -1,5 +1,5 @@
 import '../common/either.dart';
-import '../common/error.dart';
+import '../common/http/error.dart';
 import '../models/user.dart';
 
 abstract class AuthenticationRepository {
