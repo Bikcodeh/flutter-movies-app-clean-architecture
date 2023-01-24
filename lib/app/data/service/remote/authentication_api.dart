@@ -4,13 +4,18 @@ import '../../../domain/common/network.dart';
 import 'body_request/session_with_login_request.dart';
 
 class AuthenticationApi {
-  Future<String?> createRequestToken() async {
-    final request = Network.getRequest(endpoint: '/authentication/token/new');
-    final result = await safeApiCall(request);
-    return result.fold<String?>((_) {
-      return null;
+  final Http _http;
+
+  AuthenticationApi(this._http);
+
+  Future<Either<Failure, String>> createRequestToken() async {
+    final result = await _http.request(
+      '/authentication/token/new',
+    );
+    return result.fold<Either<Failure, String>>((failure) {
+      return Either.left(failure);
     }, (jsonMap) {
-      return jsonMap['request_token'];
+      return Either.right(jsonMap['request_token'] as String);
     });
   }
 
@@ -19,19 +24,33 @@ class AuthenticationApi {
     required String password,
     required String requestToken,
   }) async {
-    final request = Network.postRequest(
-      endpoint: '/authentication/token/validate_with_login',
+    final result = await _http.request(
+      '/authentication/token/validate_with_login',
       body: SessionWithLoginRequest(
         username: username,
         password: password,
         requestToken: requestToken,
-      ).toJson(),
+      ),
+      method: HttpMethod.post,
     );
-    final result = await safeApiCall(request);
     final data = result.fold<Either<Failure, String>>(
       (failure) => Either.left(failure),
       (jsonMap) => Either.right(jsonMap['request_token']),
     );
     return data;
+  }
+
+  Future<Either<Failure, String>> createSession(String token) async {
+    final result = await _http.request(
+      '/authentication/session/new',
+      body: {
+        'request_token': token,
+      },
+      method: HttpMethod.post,
+    );
+    return result.fold(
+      (failure) => Either.left(failure),
+      (jsonMap) => Either.right(jsonMap['session_id']),
+    );
   }
 }

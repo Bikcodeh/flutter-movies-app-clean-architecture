@@ -1,58 +1,112 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 import 'either.dart';
 import 'error.dart';
 
-class Network {
-  static const String _baseUrl = 'https://api.themoviedb.org/3';
-  static const String _apiKey = '4662e7a7fe13c9d91c80552e10a09dc1';
+enum HttpMethod {
+  get,
+  post,
+  patch,
+  delete,
+  put,
+}
 
-  static Future<http.Response> getRequest({
-    required String endpoint,
-    Map<String, String>? headers,
-  }) {
-    return http.get(
-      Uri.parse('$_baseUrl$endpoint?api_key=$_apiKey'),
-      headers: {
-        HttpHeaders.contentTypeHeader: 'application/json',
-        ...?headers,
-      },
-    );
-  }
+class Http {
+  final String _baseUrl;
+  final String _apiKey;
+  final Client _client;
 
-  static Future<http.Response> postRequest({
-    required String endpoint,
-    Map<String, String>? headers,
-    Object? body,
-  }) {
-    return http.post(
-      Uri.parse('$_baseUrl$endpoint?api_key=$_apiKey'),
-      headers: {
-        HttpHeaders.contentTypeHeader: 'application/json',
-        HttpHeaders.acceptHeader: 'application/json',
-        ...?headers
-      },
-      body: jsonEncode(body),
+  Http({
+    required String baseUrl,
+    required String apiKey,
+    required Client client,
+  })  : _baseUrl = baseUrl,
+        _apiKey = apiKey,
+        _client = client;
+
+  Future<Either<Failure, Map<String, dynamic>>> request(
+    String path, {
+    HttpMethod method = HttpMethod.get,
+    Map<String, String> headers = const {},
+    Map<String, String> queryParameters = const {},
+    Object body = const {},
+    bool useApiKey = true,
+  }) async {
+    if (useApiKey) {
+      queryParameters = {
+        ...queryParameters,
+        'api_key': _apiKey,
+      };
+    }
+    late final Either<Failure, Map<String, dynamic>> result;
+    Uri url = Uri.parse(
+      path.startsWith('http') ? path : '$_baseUrl$path',
     );
+    if (queryParameters.isNotEmpty) {
+      url = url.replace(queryParameters: queryParameters);
+    }
+
+    headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.acceptHeader: 'application/json',
+      ...headers,
+    };
+    final bodyString = jsonEncode(body);
+    switch (method) {
+      case HttpMethod.get:
+        result = await safeApiCall(_client.get(url));
+        break;
+      case HttpMethod.post:
+        result = await safeApiCall(_client.post(
+          url,
+          headers: headers,
+          body: bodyString,
+        ));
+        break;
+      case HttpMethod.patch:
+        result = await safeApiCall(_client.patch(
+          url,
+          headers: headers,
+          body: bodyString,
+        ));
+        break;
+      case HttpMethod.delete:
+        result = await safeApiCall(_client.delete(
+          url,
+          headers: headers,
+          body: bodyString,
+        ));
+        break;
+      case HttpMethod.put:
+        result = await safeApiCall(_client.put(
+          url,
+          headers: headers,
+          body: bodyString,
+        ));
+        break;
+    }
+    return result;
   }
 }
 
 Future<Either<Failure, Map<String, dynamic>>> safeApiCall(
-  Future<http.Response> request,
+  Future<Response> request,
 ) async {
   try {
     final response = await request;
-    if (response.statusCode == HttpStatus.ok) {
+    if (response.statusCode >= HttpStatus.ok && response.statusCode < 300) {
       final jsonMap = Map<String, dynamic>.from(jsonDecode(response.body));
       return Either.right(jsonMap);
     } else {
-      return Either.left(handleHttpError(response.statusCode));
+      return Either.left(
+        handleHttpError(response.statusCode),
+      );
     }
   } catch (e) {
-    if (e is SocketException) {
+    if (e is SocketException || e is ClientException) {
       return Either.left(Failure.connectivity);
     }
     return Either.left(Failure.unknown);

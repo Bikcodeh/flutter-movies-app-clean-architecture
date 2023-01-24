@@ -23,7 +23,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   @override
   Future<bool> get isSignedIn async {
     final sessionId = await _flutterSecureStorage.read(key: _key);
-    return false;
+    return sessionId != null;
   }
 
   @override
@@ -31,22 +31,34 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
     String username,
     String password,
   ) async {
-    final token = await _authenticationApi.createRequestToken();
+    final data = await _authenticationApi.createRequestToken();
 
-    if (token == null) {
-      return Either.left(Failure.unknown);
-    }
-
-    final result = await _authenticationApi.createSessionWithLogin(
-      username: username,
-      password: password,
-      requestToken: token,
-    );
-    await _flutterSecureStorage.write(key: _key, value: 'session');
-    return result.fold(
-      (failure) => Either.left(failure),
-      (_) => Either.right(User()),
-    );
+    return data.fold((failure) async {
+      return Either.left(failure);
+    }, (token) async {
+      final result = await _authenticationApi.createSessionWithLogin(
+        username: username,
+        password: password,
+        requestToken: token,
+      );
+      return result.fold(
+        (failure) async {
+          return Either.left(failure);
+        },
+        (requestToken) async {
+          final response = await _authenticationApi.createSession(requestToken);
+          return response.fold(
+            (fail) async => Either.left(fail),
+            (sessionId) async {
+              await _flutterSecureStorage.write(key: _key, value: sessionId);
+              return Either.right(
+                User(),
+              );
+            },
+          );
+        },
+      );
+    });
   }
 
   @override
