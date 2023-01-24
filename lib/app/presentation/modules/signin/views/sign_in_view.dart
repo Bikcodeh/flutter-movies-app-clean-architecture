@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../domain/common/http/error.dart';
 import '../../../../domain/repository/authentication_repository.dart';
 import '../../../routes/routes.dart';
+import '../controller/sign_in_controller.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({super.key});
@@ -13,79 +14,79 @@ class SignInView extends StatefulWidget {
 }
 
 class _SignInViewState extends State<SignInView> {
-  String _username = '', _password = '';
-  bool _fetching = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Form(
-            child: AbsorbPointer(
-              absorbing: _fetching,
-              child:
-                  Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  onChanged: (text) => {
-                    setState((() {
-                      _username = text.trim();
-                    }))
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Username *',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (String? text) {
-                    return (text != null && text.isEmpty) ? 'Required' : null;
-                  },
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  onChanged: (text) => {
-                    setState((() {
-                      _password = text.replaceAll(' ', '');
-                    }))
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Password *',
-                  ),
-                  validator: (String? text) {
-                    text = text?.replaceAll(' ', '') ?? '';
-                    if (text.isEmpty) {
-                      return 'Password required';
-                    } else if (text.length < 4) {
-                      return 'Password must be at least 4 characters';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Builder(builder: (context) {
-                  if (_fetching) {
-                    return const CircularProgressIndicator();
-                  }
-                  return SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        final isValid = Form.of(context)!.validate();
-                        if (isValid) {
-                          _submit(context);
-                        }
-                      },
-                      child: const Text('Sign in'),
-                    ),
-                  );
-                })
-              ]),
+    return ChangeNotifierProvider(
+      create: (_) => SignInController(),
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Form(
+              child: Builder(builder: (context) {
+                final signInController =
+                    Provider.of<SignInController>(context, listen: true);
+                return AbsorbPointer(
+                  absorbing: signInController.fetching,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          onChanged: (text) =>
+                              signInController.onUsernameChange(text),
+                          decoration: const InputDecoration(
+                            labelText: 'Username *',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (String? text) {
+                            return (text != null && text.isEmpty)
+                                ? 'Required'
+                                : null;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          onChanged: (text) =>
+                              signInController.onPasswordChange(text),
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Password *',
+                          ),
+                          validator: (String? text) {
+                            text = text?.replaceAll(' ', '') ?? '';
+                            if (text.isEmpty) {
+                              return 'Password required';
+                            } else if (text.length < 4) {
+                              return 'Password must be at least 4 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        signInController.fetching
+                            ? const CircularProgressIndicator()
+                            : SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    final isValid =
+                                        Form.of(context)!.validate();
+                                    if (isValid) {
+                                      _submit(context);
+                                    }
+                                  },
+                                  child: const Text('Sign in'),
+                                ),
+                              ),
+                      ]),
+                );
+              }),
             ),
           ),
         ),
@@ -94,20 +95,17 @@ class _SignInViewState extends State<SignInView> {
   }
 
   Future<void> _submit(BuildContext context) async {
-    setState(() {
-      _fetching = true;
-    });
+    final SignInController signInController = context.read();
+    signInController.setFetching(true);
     final result = await context.read<AuthenticationRepository>().signIn(
-          _username,
-          _password,
+          signInController.username,
+          signInController.password,
         );
     if (!mounted) {
       return;
     }
     result.fold((failure) {
-      setState(() {
-        _fetching = false;
-      });
+      signInController.setFetching(false);
       final message = {
         Failure.notFound: 'Not found.',
         Failure.unauthorized: 'User unauthorized.',
