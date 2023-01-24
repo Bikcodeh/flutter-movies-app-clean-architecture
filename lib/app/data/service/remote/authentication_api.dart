@@ -14,7 +14,7 @@ class AuthenticationApi {
     final result = await _http.request<String>('/authentication/token/new',
         onSuccess: ((responseBody) {
       final jsonMap = Map<String, dynamic>.from(jsonDecode(responseBody));
-      return jsonMap['request_token'];
+      return jsonMap['request_toke'];
     }));
     return result.fold<Either<Failure, String>>((failure) {
       return Either.left(failure);
