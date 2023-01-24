@@ -29,7 +29,7 @@ class _SignInViewState extends State<SignInView> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   onChanged: (text) => {
                     setState((() {
-                      _username = text.trim().toLowerCase();
+                      _username = text.trim();
                     }))
                   },
                   decoration: const InputDecoration(
@@ -47,7 +47,7 @@ class _SignInViewState extends State<SignInView> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   onChanged: (text) => {
                     setState((() {
-                      _password = text.replaceAll(' ', '').toLowerCase();
+                      _password = text.replaceAll(' ', '');
                     }))
                   },
                   decoration: const InputDecoration(
@@ -110,7 +110,8 @@ class _SignInViewState extends State<SignInView> {
       final message = {
         Failure.notFound: 'Not found.',
         Failure.unauthorized: 'User unauthorized.',
-        Failure.unknown: 'An unknow error ocurred.'
+        Failure.unknown: 'An unknow error ocurred.',
+        Failure.connectivity: 'Network connection error'
       }[failure];
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message!)),
