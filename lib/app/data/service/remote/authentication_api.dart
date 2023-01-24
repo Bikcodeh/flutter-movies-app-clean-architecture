@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import '../../../domain/common/either.dart';
-import '../../../domain/common/error.dart';
-import '../../../domain/common/network.dart';
+import '../../../domain/common/http/error.dart';
+import '../../../domain/common/http/network.dart';
 import 'body_request/session_with_login_request.dart';
 
 class AuthenticationApi {
@@ -37,7 +37,7 @@ class AuthenticationApi {
       ),
       method: HttpMethod.post,
       onSuccess: (responseBody) {
-        final jsonMap = Map<String, dynamic>.from(jsonDecode(responseBody));
+        final jsonMap = responseBody as Map;
         return jsonMap['request_token'];
       },
     );
@@ -54,7 +54,7 @@ class AuthenticationApi {
           'request_token': token,
         },
         method: HttpMethod.post, onSuccess: ((responseBody) {
-      final jsonMap = Map<String, dynamic>.from(jsonDecode(responseBody));
+      final jsonMap = responseBody as Map;
       return jsonMap['session_id'];
     }));
     return result.fold(

@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../domain/common/either.dart';
-import '../../domain/common/error.dart';
+import '../../domain/common/http/error.dart';
 import '../../domain/models/user.dart';
 import '../../domain/repository/authentication_repository.dart';
 import '../service/remote/authentication_api.dart';

@@ -5,8 +5,11 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
-import 'either.dart';
+import '../either.dart';
 import 'error.dart';
+
+part 'parse_response_body.dart';
+part 'print_logs.dart';
 
 enum HttpMethod {
   get,
@@ -36,7 +39,7 @@ class Http {
     Map<String, String> queryParameters = const {},
     Object body = const {},
     bool useApiKey = true,
-    required T Function(String responseBody) onSuccess,
+    required T Function(dynamic responseBody) onSuccess,
   }) async {
     var logs = {
       'startTime': DateTime.now().toString(),
@@ -105,13 +108,14 @@ class Http {
           );
           break;
       }
+      final responseBody = _parseResponseBody(response.body);
       logs = {
         ...logs,
         'statusCode': response.statusCode.toString(),
-        'responseBody': response.body.toString(),
+        'responseBody': responseBody.toString(),
       };
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        return Either.right(onSuccess(response.body));
+        return Either.right(onSuccess(responseBody));
       } else {
         return Either.left(handleHttpError(response.statusCode));
       }
@@ -134,36 +138,7 @@ class Http {
         ...logs,
         'endTime': DateTime.now().toString(),
       };
-      if (kDebugMode) {
-        log(
-          '''
-
-🔥------------------------------------------------------
-    ${const JsonEncoder.withIndent(' ').convert(logs)}
-🔥------------------------------------------------------
-''',
-          stackTrace: stackStrace,
-        );
-      }
+      printLogs(logs, stackStrace);
     }
   }
-}
-
-Failure handleHttpError(int httpErrorCode) {
-  late Failure failure;
-  switch (httpErrorCode) {
-    case HttpStatus.unauthorized:
-      failure = Failure.unauthorized;
-      break;
-    case HttpStatus.internalServerError:
-      failure = Failure.server;
-      break;
-    case HttpStatus.notFound:
-      failure = Failure.notFound;
-      break;
-    default:
-      failure = Failure.unknown;
-      break;
-  }
-  return failure;
 }
