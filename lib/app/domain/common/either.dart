@@ -23,4 +23,12 @@ class Either<Left, Right> {
       return right(_right as Right);
     }
   }
+
+  Right? get right {
+    return _right;
+  }
+
+  Left? get left {
+    return _left;
+  }
 }
