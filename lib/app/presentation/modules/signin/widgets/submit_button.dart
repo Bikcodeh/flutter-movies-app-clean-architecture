@@ -12,7 +12,7 @@ class SubmitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SignInController signInController = Provider.of(context);
-    if (signInController.fetching) {
+    if (signInController.signInState.fetching) {
       return const CircularProgressIndicator();
     }
     return SizedBox(
@@ -33,8 +33,8 @@ class SubmitButton extends StatelessWidget {
     final SignInController signInController = context.read();
     signInController.setFetching(true);
     final result = await context.read<AuthenticationRepository>().signIn(
-          signInController.username,
-          signInController.password,
+          signInController.signInState.username,
+          signInController.signInState.password,
         );
     if (!signInController.mounted) {
       return;
