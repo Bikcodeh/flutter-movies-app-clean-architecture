@@ -1,23 +1,54 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
 
-class SignInController extends ChangeNotifier {
-  String _username = '', _password = '';
-  bool _fetching = false;
+import '../../../../domain/repository/authentication_repository.dart';
+import '../../../global/base/state_notifier.dart';
+import 'sign_in_state.dart';
 
-  String get username => _username;
-  String get password => _password;
-  bool get fetching => _fetching;
+class SignInController extends StateNotifier<SignInState> {
+  bool _mounted = true;
+  final AuthenticationRepository authenticationRepository;
+
+  SignInController(super.state, {required this.authenticationRepository});
+
+  @override
+  bool get mounted => _mounted;
 
   void onUsernameChange(String text) {
-    _username = text.trim();
+    update(state.copy(username: text.trim()));
   }
 
   void onPasswordChange(String text) {
-    _password = text.replaceAll(' ', '');
+    update(state.copy(password: text.replaceAll(' ', '')));
   }
 
-  void setFetching(bool isFetching) {
-    _fetching = isFetching;
-    notifyListeners();
+  Future<void> submit() async {
+    update(state.copy(fetching: true, errorMessage: null, success: false));
+    final result = await authenticationRepository.signIn(
+      state.username,
+      state.password,
+    );
+    result.fold((failure) {
+      update(
+        state.copy(
+          fetching: false,
+          errorMessage: failure.message,
+          success: false,
+        ),
+      );
+    }, (_) {
+      update(
+        state.copy(
+          fetching: false,
+          errorMessage: null,
+          success: true,
+        ),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _mounted = false;
+    super.dispose();
   }
 }

@@ -1,11 +1,14 @@
 import 'dart:io';
 
 enum Failure {
-  notFound,
-  unauthorized,
-  unknown,
-  server,
-  connectivity,
+  notFound('Not found'),
+  unauthorized('You are unauthorized.'),
+  unknown('An unknown error ocurred.'),
+  server('A server error ocurred.'),
+  connectivity('Please check your internet connection');
+
+  final String message;
+  const Failure(this.message);
 }
 
 Failure handleHttpError(int httpErrorCode) {
