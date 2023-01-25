@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../controller/sign_in_controller.dart';
+import '../controller/sign_in_state.dart';
 import '../widgets/form_field_password.dart';
 import '../widgets/submit_button.dart';
 
@@ -11,7 +12,7 @@ class SignInView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => SignInController(),
+      create: (_) => SignInController(SignInState()),
       child: Scaffold(
         body: SafeArea(
           child: Padding(
@@ -21,7 +22,7 @@ class SignInView extends StatelessWidget {
                 final signInController =
                     Provider.of<SignInController>(context, listen: true);
                 return AbsorbPointer(
-                  absorbing: signInController.signInState.fetching,
+                  absorbing: signInController.state.fetching,
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [

@@ -1,4 +1,6 @@
-class SignInState {
+import 'package:equatable/equatable.dart';
+
+class SignInState implements Equatable {
   final String username, password;
   final bool fetching;
 
@@ -19,4 +21,13 @@ class SignInState {
       fetching: fetching ?? this.fetching,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        username,
+        password,
+        fetching,
+      ];
+  @override
+  bool? get stringify => true;
 }
