@@ -1,25 +1,49 @@
+import 'dart:async';
+
+import '../../../../domain/repository/authentication_repository.dart';
 import '../../../global/base/state_notifier.dart';
 import 'sign_in_state.dart';
 
 class SignInController extends StateNotifier<SignInState> {
   bool _mounted = true;
+  final AuthenticationRepository authenticationRepository;
 
-  SignInController(super.state);
+  SignInController(super.state, {required this.authenticationRepository});
 
   @override
   bool get mounted => _mounted;
 
   void onUsernameChange(String text) {
-    state = state.copy(username: text.trim());
+    update(state.copy(username: text.trim()));
   }
 
   void onPasswordChange(String text) {
-    state = state.copy(password: text.replaceAll(' ', ''));
+    update(state.copy(password: text.replaceAll(' ', '')));
   }
 
-  void setFetching(bool isFetching) {
-    state = state.copy(fetching: isFetching);
-    notifyListeners();
+  Future<void> submit() async {
+    update(state.copy(fetching: true, errorMessage: null, success: false));
+    final result = await authenticationRepository.signIn(
+      state.username,
+      state.password,
+    );
+    result.fold((failure) {
+      update(
+        state.copy(
+          fetching: false,
+          errorMessage: failure.message,
+          success: false,
+        ),
+      );
+    }, (_) {
+      update(
+        state.copy(
+          fetching: false,
+          errorMessage: null,
+          success: true,
+        ),
+      );
+    });
   }
 
   @override

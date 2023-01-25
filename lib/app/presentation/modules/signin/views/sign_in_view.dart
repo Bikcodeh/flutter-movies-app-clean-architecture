@@ -12,7 +12,10 @@ class SignInView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => SignInController(SignInState()),
+      create: (_) => SignInController(
+        SignInState(),
+        authenticationRepository: context.read(),
+      ),
       child: Scaffold(
         body: SafeArea(
           child: Padding(

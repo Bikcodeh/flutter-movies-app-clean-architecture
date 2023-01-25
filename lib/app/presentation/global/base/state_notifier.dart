@@ -9,13 +9,13 @@ abstract class StateNotifier<T> extends ChangeNotifier {
   bool get mounted => _mounted;
   T get state => _state;
 
-  set state(T newState) => _update(newState);
+  void update(T newState) => _updateState(newState);
 
   void onlyUpdate(T newState) {
-    _update(newState, notify: false);
+    _updateState(newState, notify: false);
   }
 
-  void _update(T newState, {bool? notify = true}) {
+  void _updateState(T newState, {bool? notify = true}) {
     if (newState != _state) {
       _state = newState;
       if (notify != null && notify) {
