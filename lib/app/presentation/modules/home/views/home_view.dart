@@ -10,18 +10,20 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('Welcome'),
-          TextButton(
-            onPressed: () {
-              context.read<AuthenticationRepository>().signOut();
-              Navigator.pushReplacementNamed(context, Routes.signIn);
-            },
-            child: const Text('Sign out'),
-          ),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Welcome'),
+            TextButton(
+              onPressed: () {
+                context.read<AuthenticationRepository>().signOut();
+                Navigator.pushReplacementNamed(context, Routes.signIn);
+              },
+              child: const Text('Sign out'),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,28 +1,31 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 import '../../domain/common/either.dart';
 import '../../domain/common/http/error.dart';
 import '../../domain/models/user.dart';
+import '../../domain/repository/account_repository.dart';
 import '../../domain/repository/authentication_repository.dart';
+import '../service/local/session_service.dart';
 import '../service/remote/authentication_api.dart';
 
-const _key = 'session_id';
-
 class AuthenticationRepositoryImpl implements AuthenticationRepository {
-  final FlutterSecureStorage _flutterSecureStorage;
   final AuthenticationApi _authenticationApi;
+  final SessionService _sessionService;
+  final AccountRepository _accountRepository;
 
   AuthenticationRepositoryImpl(
-    this._flutterSecureStorage,
+    this._sessionService,
     this._authenticationApi,
+    this._accountRepository,
   );
 
   @override
-  Future<User?> getUserData() => Future.value(null);
+  Future<User?> getUserData() async {
+    final user = await _accountRepository.getUserData();
+    return user;
+  }
 
   @override
   Future<bool> get isSignedIn async {
-    final sessionId = await _flutterSecureStorage.read(key: _key);
+    final sessionId = await _sessionService.getSessionId();
     return sessionId != null;
   }
 
@@ -50,10 +53,12 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
           return response.fold(
             (fail) async => Either.left(fail),
             (sessionId) async {
-              await _flutterSecureStorage.write(key: _key, value: sessionId);
-              return Either.right(
-                User(),
-              );
+              _sessionService.saveSessionId(sessionId);
+              final user = await _accountRepository.getUserData();
+              if (user == null) {
+                Either.left(Failure.notFound);
+              }
+              return Either.right(user!);
             },
           );
         },
@@ -63,6 +68,6 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
   @override
   void signOut() async {
-    await _flutterSecureStorage.delete(key: _key);
+    _sessionService.clearSessionId();
   }
 }
