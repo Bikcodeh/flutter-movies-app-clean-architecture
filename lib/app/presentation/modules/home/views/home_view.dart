@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../domain/repository/authentication_repository.dart';
 import '../../../global/controllers/session_controller.dart';
 import '../../../routes/routes.dart';
 
@@ -20,7 +19,6 @@ class HomeView extends StatelessWidget {
             Text('Welcome ${user!.username}'),
             TextButton(
               onPressed: () {
-                context.read<AuthenticationRepository>().signOut();
                 sessionController.signOut();
                 Navigator.pushReplacementNamed(context, Routes.signIn);
               },

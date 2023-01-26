@@ -49,7 +49,9 @@ class ProviderFactory {
 
   static ChangeNotifierProvider provideSessionControllerNotifier() {
     return ChangeNotifierProvider<SessionController>(
-      create: (_) => SessionController(),
+      create: (context) => SessionController(
+        authenticationRepository: context.read(),
+      ),
     );
   }
 }
