@@ -33,14 +33,16 @@ class SignInController extends StateNotifier<SignInState> {
           fetching: false,
           errorMessage: failure.message,
           success: false,
+          user: null,
         ),
       );
-    }, (_) {
+    }, (user) {
       update(
         state.copy(
           fetching: false,
           errorMessage: null,
           success: true,
+          user: user,
         ),
       );
     });

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../global/controllers/session_controller.dart';
 import '../../../routes/routes.dart';
 import '../controller/sign_in_controller.dart';
 
@@ -36,12 +37,14 @@ class SubmitButton extends StatelessWidget {
       context,
       listen: false,
     );
+    final SessionController sessionController = Provider.of(context);
     await signInController.submit();
 
     if (!signInController.mounted) {
       return;
     }
     if (signInController.state.success == true) {
+      sessionController.setUser(signInController.state.user!);
       Navigator.pushReplacementNamed(context, Routes.home);
     }
 
