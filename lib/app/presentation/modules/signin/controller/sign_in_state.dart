@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../../domain/models/user.dart';
+import '../../../../domain/models/user/user.dart';
 
 class SignInState implements Equatable {
   final String username, password;
