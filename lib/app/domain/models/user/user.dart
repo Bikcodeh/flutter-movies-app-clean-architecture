@@ -16,6 +16,14 @@ class User with _$User {
   }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  //private constructor
+  const User._();
+
+  //If we want to use custom functions, we need to set private constructor
+  String getFormattedUserName() {
+    return '$username $id';
+  }
 }
 
 String? avatarPathFromJson(Map<String, dynamic> json) {
