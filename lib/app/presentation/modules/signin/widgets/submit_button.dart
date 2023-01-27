@@ -37,7 +37,7 @@ class SubmitButton extends StatelessWidget {
       context,
       listen: false,
     );
-    final SessionController sessionController = Provider.of(context);
+    final SessionController sessionController = context.read();
     await signInController.submit();
 
     if (!signInController.mounted) {
