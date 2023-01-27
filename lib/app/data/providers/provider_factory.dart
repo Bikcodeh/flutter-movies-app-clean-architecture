@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../domain/common/http/network.dart';
 import '../../domain/repository/authentication_repository.dart';
 import '../../domain/repository/connectivity_repository.dart';
+import '../../presentation/global/controllers/session_controller.dart';
 import '../repository/account_repository_impl.dart';
 import '../repository/authentication_repository_impl.dart';
 import '../repository/connectivity_repository_impl.dart';
@@ -42,6 +43,14 @@ class ProviderFactory {
       create: (context) => ConnectivityRepositoryImpl(
         Connectivity(),
         InternetChecker(),
+      ),
+    );
+  }
+
+  static ChangeNotifierProvider provideSessionControllerNotifier() {
+    return ChangeNotifierProvider<SessionController>(
+      create: (context) => SessionController(
+        authenticationRepository: context.read(),
       ),
     );
   }
