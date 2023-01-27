@@ -1,29 +1,21 @@
-import 'package:equatable/equatable.dart';
-import 'package:json_annotation/json_annotation.dart';
+// ignore_for_file: invalid_annotation_target
 
-// To generate class user.g.dart on terminal run:
-//flutter pub run build_runner build
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+//If we want to work with json serializable and also freezed, we need to use
+//the 2 lines below
+part 'user.freezed.dart';
 part 'user.g.dart';
 
-@JsonSerializable()
-class User extends Equatable {
-  final int id;
-  final String username;
-  @JsonKey(name: 'avatar', fromJson: avatarPathFromJson)
-  final String? avatarPath;
-
-  const User({
-    required this.id,
-    required this.username,
-    this.avatarPath,
-  });
-
-  Map<String, dynamic> toJson() => _$UserToJson(this);
+@freezed
+class User with _$User {
+  const factory User({
+    required int id,
+    required String username,
+    @JsonKey(name: 'avatar', fromJson: avatarPathFromJson) String? avatarPath,
+  }) = _User;
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
-
-  @override
-  List<Object?> get props => [id, username];
 }
 
 String? avatarPathFromJson(Map<String, dynamic> json) {
