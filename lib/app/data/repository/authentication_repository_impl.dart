@@ -36,23 +36,23 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   ) async {
     final data = await _authenticationApi.createRequestToken();
 
-    return data.fold((failure) async {
+    return data.when(left: (failure) async {
       return Either.left(failure);
-    }, (token) async {
+    }, right: (token) async {
       final result = await _authenticationApi.createSessionWithLogin(
         username: username,
         password: password,
         requestToken: token,
       );
-      return result.fold(
-        (failure) async {
+      return result.when(
+        left: (failure) async {
           return Either.left(failure);
         },
-        (requestToken) async {
+        right: (requestToken) async {
           final response = await _authenticationApi.createSession(requestToken);
-          return response.fold(
-            (fail) async => Either.left(fail),
-            (sessionId) async {
+          return response.when(
+            left: (fail) async => Either.left(fail),
+            right: (sessionId) async {
               _sessionService.saveSessionId(sessionId);
               final user = await _accountRepository.getUserData();
               if (user == null) {

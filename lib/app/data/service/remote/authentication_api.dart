@@ -14,9 +14,9 @@ class AuthenticationApi {
       final jsonMap = responseBody as Map;
       return jsonMap['request_token'];
     }));
-    return result.fold<Either<Failure, String>>((failure) {
+    return result.when(left: (failure) {
       return Either.left(failure);
-    }, (token) {
+    }, right: (token) {
       return Either.right(token);
     });
   }
@@ -40,9 +40,9 @@ class AuthenticationApi {
         return jsonMap['request_token'];
       },
     );
-    final data = result.fold<Either<Failure, String>>(
-      (failure) => Either.left(failure),
-      (token) => Either.right(token),
+    final data = result.when<Either<Failure, String>>(
+      left: (failure) => Either.left(failure),
+      right: (token) => Either.right(token),
     );
     return data;
   }
@@ -56,9 +56,9 @@ class AuthenticationApi {
       final jsonMap = responseBody as Map;
       return jsonMap['session_id'];
     }));
-    return result.fold(
-      (failure) => Either.left(failure),
-      (sessionId) => Either.right(sessionId),
+    return result.when(
+      left: (failure) => Either.left(failure),
+      right: (sessionId) => Either.right(sessionId),
     );
   }
 }
