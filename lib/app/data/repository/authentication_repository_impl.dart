@@ -1,6 +1,6 @@
 import '../../domain/common/either.dart';
-import '../../domain/common/http/error.dart';
-import '../../domain/models/user.dart';
+import '../../domain/common/failure/failure.dart';
+import '../../domain/models/user/user.dart';
 import '../../domain/repository/account_repository.dart';
 import '../../domain/repository/authentication_repository.dart';
 import '../service/local/session_service.dart';
@@ -56,7 +56,7 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
               _sessionService.saveSessionId(sessionId);
               final user = await _accountRepository.getUserData();
               if (user == null) {
-                Either.left(Failure.notFound);
+                Either.left(Failure.notFound());
               }
               return Either.right(user!);
             },

@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import '../either.dart';
-import 'error.dart';
+import '../failure/failure.dart';
 
 part 'parse_response_body.dart';
 part 'print_logs.dart';
@@ -130,9 +130,9 @@ class Http {
           ...logs,
           'exception': 'Network exception',
         };
-        return Either.left(Failure.connectivity);
+        return Either.left(Failure.connectivity());
       }
-      return Either.left(Failure.unknown);
+      return Either.left(Failure.unknown());
     } finally {
       logs = {
         ...logs,

@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../domain/common/failure/failure.dart';
+
 abstract class StateNotifier<T> extends ChangeNotifier {
   StateNotifier(this._state);
 
@@ -28,5 +30,15 @@ abstract class StateNotifier<T> extends ChangeNotifier {
   void dispose() {
     _mounted = false;
     super.dispose();
+  }
+
+  String handleError(Failure failure) {
+    return failure.when(
+      notFound: () => 'Not found',
+      unauthorized: () => 'Unauthorized error.',
+      unknown: () => 'An unexpected error ocurred.',
+      connectivity: () => 'Please check your connection.',
+      server: () => 'An internal error ocurred.',
+    );
   }
 }

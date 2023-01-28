@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../controller/sign_in_controller.dart';
-import '../controller/sign_in_state.dart';
+import '../controller/state/sign_in_state.dart';
 import '../widgets/form_field_password.dart';
 import '../widgets/submit_button.dart';
 
@@ -13,7 +13,7 @@ class SignInView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => SignInController(
-        SignInState(),
+        const SignInState(),
         authenticationRepository: context.read(),
       ),
       child: Scaffold(
