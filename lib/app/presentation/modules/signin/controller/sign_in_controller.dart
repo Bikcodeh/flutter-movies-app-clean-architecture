@@ -31,7 +31,7 @@ class SignInController extends StateNotifier<SignInState> {
       update(
         state.copyWith(
           fetching: false,
-          errorMessage: failure.message,
+          errorMessage: handleError(failure),
           success: false,
           user: null,
         ),

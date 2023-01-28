@@ -1,5 +1,5 @@
 import '../../../domain/common/either.dart';
-import '../../../domain/common/http/error.dart';
+import '../../../domain/common/failure/failure.dart';
 import '../../../domain/common/http/network.dart';
 import 'body_request/session_with_login_request.dart';
 
