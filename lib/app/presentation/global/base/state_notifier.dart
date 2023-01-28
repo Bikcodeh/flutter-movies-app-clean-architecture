@@ -39,6 +39,7 @@ abstract class StateNotifier<T> extends ChangeNotifier {
       unknown: () => 'An unexpected error ocurred.',
       connectivity: () => 'Please check your connection.',
       server: () => 'An internal error ocurred.',
+      notVerified: () => 'Email not verified',
     );
   }
 }

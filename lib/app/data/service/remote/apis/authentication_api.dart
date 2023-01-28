@@ -1,7 +1,7 @@
-import '../../../domain/common/either.dart';
-import '../../../domain/common/failure/failure.dart';
-import '../../../domain/common/http/network.dart';
-import 'body_request/session_with_login_request.dart';
+import '../../../../domain/common/either/either.dart';
+import '../../../../domain/common/failure/failure.dart';
+import '../body_request/session_with_login_request.dart';
+import '../http/network.dart';
 
 class AuthenticationApi {
   final Http _http;

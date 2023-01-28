@@ -1,4 +1,4 @@
-import '../common/either.dart';
+import '../common/either/either.dart';
 import '../common/failure/failure.dart';
 import '../models/user/user.dart';
 

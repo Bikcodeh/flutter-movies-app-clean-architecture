@@ -1,10 +1,10 @@
-import '../../domain/common/either.dart';
+import '../../domain/common/either/either.dart';
 import '../../domain/common/failure/failure.dart';
 import '../../domain/models/user/user.dart';
 import '../../domain/repository/account_repository.dart';
 import '../../domain/repository/authentication_repository.dart';
 import '../service/local/session_service.dart';
-import '../service/remote/authentication_api.dart';
+import '../service/remote/apis/authentication_api.dart';
 
 class AuthenticationRepositoryImpl implements AuthenticationRepository {
   final AuthenticationApi _authenticationApi;

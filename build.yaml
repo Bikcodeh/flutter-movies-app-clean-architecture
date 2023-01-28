@@ -11,4 +11,4 @@ targets:
             - lib/app/presentation/**/**_state.dart
             - lib/app/domain/models/**/*
             - lib/app/domain/common/failure/*
-            - lib/app/domain/common/either.dart
+            - lib/app/domain/common/either/**/*

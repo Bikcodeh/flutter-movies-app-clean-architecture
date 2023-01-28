@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
-import '../either.dart';
-import '../failure/failure.dart';
+import '../../../../domain/common/either/either.dart';
+import '../../../../domain/common/failure/failure.dart';
 
 part 'parse_response_body.dart';
 part 'print_logs.dart';
@@ -117,7 +117,7 @@ class Http {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return Either.right(onSuccess(responseBody));
       } else {
-        return Either.left(handleHttpError(response.statusCode));
+        return Either.left(handleHttpError(response.statusCode, responseBody));
       }
     } catch (e, s) {
       stackStrace = s;
