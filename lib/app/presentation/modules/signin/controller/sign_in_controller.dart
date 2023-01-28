@@ -27,7 +27,7 @@ class SignInController extends StateNotifier<SignInState> {
       state.username,
       state.password,
     );
-    result.fold((failure) {
+    result.when(left: (failure) {
       update(
         state.copyWith(
           fetching: false,
@@ -36,7 +36,7 @@ class SignInController extends StateNotifier<SignInState> {
           user: null,
         ),
       );
-    }, (user) {
+    }, right: (user) {
       update(
         state.copyWith(
           fetching: false,

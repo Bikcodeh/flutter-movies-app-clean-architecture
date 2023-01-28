@@ -19,7 +19,6 @@ class AccountApi {
         'session_id': sessiondId,
       },
     );
-
-    return result.fold((_) => null, (user) => user);
+    return result.when(left: (_) => null, right: (user) => user);
   }
 }
