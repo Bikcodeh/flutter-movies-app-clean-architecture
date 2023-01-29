@@ -1,5 +1,6 @@
 import '../../domain/common/either/either.dart';
-import '../../domain/common/failure/failure.dart';
+import '../../domain/common/failure/http/http_failure.dart';
+import '../../domain/common/failure/sign_in_failure.dart';
 import '../../domain/models/user/user.dart';
 import '../../domain/repository/account_repository.dart';
 import '../../domain/repository/authentication_repository.dart';
@@ -30,14 +31,21 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   }
 
   @override
-  Future<Either<Failure, User>> signIn(
+  Future<Either<SignInFailure, User>> signIn(
     String username,
     String password,
   ) async {
     final data = await _authenticationApi.createRequestToken();
 
     return data.when(left: (failure) async {
-      return Either.left(failure);
+      if (failure is HttpFailureUnauthorized) {
+        final error = handleStatusCodeError(
+          statusCode: failure.statusCode,
+          httpFailure: failure,
+        );
+        return Either.left(error);
+      }
+      return Either.left(SignInFailure.httpFailure(failure));
     }, right: (token) async {
       final result = await _authenticationApi.createSessionWithLogin(
         username: username,
@@ -51,12 +59,13 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
         right: (requestToken) async {
           final response = await _authenticationApi.createSession(requestToken);
           return response.when(
-            left: (fail) async => Either.left(fail),
+            left: (fail) async => Either.left(SignInFailure.httpFailure(fail)),
             right: (sessionId) async {
               _sessionService.saveSessionId(sessionId);
               final user = await _accountRepository.getUserData();
               if (user == null) {
-                Either.left(Failure.notFound());
+                Either.left(
+                    SignInFailure.httpFailure(const HttpFailure.notFound()));
               }
               return Either.right(user!);
             },

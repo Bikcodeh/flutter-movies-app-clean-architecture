@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../../../domain/common/failure/sign_in_failure.dart';
 import '../../../../domain/repository/authentication_repository.dart';
 import '../../../global/base/state_notifier.dart';
 import 'state/sign_in_state.dart';
@@ -31,7 +32,7 @@ class SignInController extends StateNotifier<SignInState> {
       update(
         state.copyWith(
           fetching: false,
-          errorMessage: handleError(failure),
+          errorMessage: handleSignInErrors(failure),
           success: false,
           user: null,
         ),
@@ -52,5 +53,16 @@ class SignInController extends StateNotifier<SignInState> {
   void dispose() {
     _mounted = false;
     super.dispose();
+  }
+
+  String handleSignInErrors(SignInFailure failure) {
+    return failure.when(
+      notVerified: () {
+        return 'Your email is not verified yet';
+      },
+      httpFailure: ((httpFailure) {
+        return handleHttpError(httpFailure);
+      }),
+    );
   }
 }
