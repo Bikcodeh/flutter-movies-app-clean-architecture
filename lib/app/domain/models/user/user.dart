@@ -2,6 +2,8 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../common/typedef.dart';
+
 //If we want to work with json serializable and also freezed, we need to use
 //the 2 lines below
 part 'user.freezed.dart';
@@ -15,7 +17,7 @@ class User with _$User {
     @JsonKey(name: 'avatar', fromJson: avatarPathFromJson) String? avatarPath,
   }) = _User;
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory User.fromJson(Json json) => _$UserFromJson(json);
 
   //private constructor
   const User._();
@@ -26,6 +28,6 @@ class User with _$User {
   }
 }
 
-String? avatarPathFromJson(Map<String, dynamic> json) {
+String? avatarPathFromJson(Json json) {
   return json['tmdb']?['avatar_path'] as String?;
 }

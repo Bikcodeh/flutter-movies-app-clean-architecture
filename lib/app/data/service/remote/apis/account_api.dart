@@ -1,5 +1,5 @@
-import '../../../domain/common/http/network.dart';
-import '../../../domain/models/user/user.dart';
+import '../../../../domain/models/user/user.dart';
+import '../http/network.dart';
 
 class AccountApi {
   final Http _http;

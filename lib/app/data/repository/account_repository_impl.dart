@@ -1,7 +1,7 @@
 import '../../domain/models/user/user.dart';
 import '../../domain/repository/account_repository.dart';
 import '../service/local/session_service.dart';
-import '../service/remote/account_api.dart';
+import '../service/remote/apis/account_api.dart';
 
 class AccountRepositoryImpl implements AccountRepository {
   final AccountApi _accountApi;

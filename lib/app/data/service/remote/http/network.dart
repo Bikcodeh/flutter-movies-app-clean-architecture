@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
-import '../either.dart';
-import '../failure/failure.dart';
+import '../../../../domain/common/either/either.dart';
+import '../../../../domain/common/failure/http/http_failure.dart';
 
 part 'parse_response_body.dart';
 part 'print_logs.dart';
@@ -32,7 +32,7 @@ class Http {
         _apiKey = apiKey,
         _client = client;
 
-  Future<Either<Failure, T>> request<T>(
+  Future<Either<HttpFailure, T>> request<T>(
     String path, {
     HttpMethod method = HttpMethod.get,
     Map<String, String> headers = const {},
@@ -117,7 +117,12 @@ class Http {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return Either.right(onSuccess(responseBody));
       } else {
-        return Either.left(handleHttpError(response.statusCode));
+        return Either.left(
+          handleHttpFailure(
+            response.statusCode,
+            responseBody,
+          ),
+        );
       }
     } catch (e, s) {
       stackStrace = s;
@@ -130,9 +135,9 @@ class Http {
           ...logs,
           'exception': 'Network exception',
         };
-        return Either.left(Failure.connectivity());
+        return Either.left(const HttpFailure.connectivity());
       }
-      return Either.left(Failure.unknown());
+      return Either.left(const HttpFailure.unknown());
     } finally {
       logs = {
         ...logs,

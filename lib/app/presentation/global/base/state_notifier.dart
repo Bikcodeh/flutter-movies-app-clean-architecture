@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../../domain/common/failure/failure.dart';
+import '../../../domain/common/failure/http/http_failure.dart';
 
 abstract class StateNotifier<T> extends ChangeNotifier {
   StateNotifier(this._state);
@@ -32,10 +32,10 @@ abstract class StateNotifier<T> extends ChangeNotifier {
     super.dispose();
   }
 
-  String handleError(Failure failure) {
-    return failure.when(
+  String handleHttpError(HttpFailure httpFailure) {
+    return httpFailure.when(
       notFound: () => 'Not found',
-      unauthorized: () => 'Unauthorized error.',
+      unauthorized: (code) => 'Unauthorized error.',
       unknown: () => 'An unexpected error ocurred.',
       connectivity: () => 'Please check your connection.',
       server: () => 'An internal error ocurred.',

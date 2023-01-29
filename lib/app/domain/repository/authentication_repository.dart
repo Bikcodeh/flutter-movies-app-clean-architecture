@@ -1,11 +1,11 @@
-import '../common/either.dart';
-import '../common/failure/failure.dart';
+import '../common/either/either.dart';
+import '../common/failure/sign_in_failure.dart';
 import '../models/user/user.dart';
 
 abstract class AuthenticationRepository {
   Future<bool> get isSignedIn;
   Future<User?> getUserData();
-  Future<Either<Failure, User>> signIn(
+  Future<Either<SignInFailure, User>> signIn(
     String username,
     String password,
   );
