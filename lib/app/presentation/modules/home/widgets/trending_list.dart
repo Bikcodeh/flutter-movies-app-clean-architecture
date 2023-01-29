@@ -7,6 +7,7 @@ import '../../../../domain/enums.dart';
 import '../../../../domain/models/media/media.dart';
 import '../../../../domain/repository/trending_repository.dart';
 import 'trending_tile.dart';
+import 'trending_title_and_filter.dart';
 
 typedef EitherListMedia = Either<HttpFailure, List<Media>>;
 
@@ -39,33 +40,13 @@ class _TrendingListState extends State<TrendingList> {
             left: 16,
             right: 16,
           ),
-          child: Row(children: [
-            const Text(
-              'TRENDING',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Spacer(),
-            DropdownButton<TimeWindow>(
-              value: _timeWindow,
-              items: const [
-                DropdownMenuItem(
-                    value: TimeWindow.day, child: Text('Last 24h')),
-                DropdownMenuItem(
-                    value: TimeWindow.week, child: Text('Last week')),
-              ],
-              onChanged: ((value) => setState(
-                    () {
-                      if (value != null) {
-                        _timeWindow = value;
-                        _future =
-                            trendingRepository.getMoviesAndSeries(_timeWindow);
-                      }
-                    },
-                  )),
-            )
-          ]),
+          child: TrendingTitleAndFilter(
+            timeWindow: _timeWindow,
+            onTimeWindowChange: (newTimeWindow) => setState(() {
+              _timeWindow = newTimeWindow;
+              _future = trendingRepository.getMoviesAndSeries(_timeWindow);
+            }),
+          ),
         ),
         const SizedBox(height: 20),
         AspectRatio(
