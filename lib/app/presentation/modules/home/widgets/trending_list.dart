@@ -18,13 +18,14 @@ class TrendingList extends StatefulWidget {
 }
 
 class _TrendingListState extends State<TrendingList> {
-  late final Future<EitherListMedia> _future;
+  late Future<EitherListMedia> _future;
+  TimeWindow _timeWindow = TimeWindow.day;
+  TrendingRepository get trendingRepository => context.read();
 
   @override
   void initState() {
     super.initState();
-    final TrendingRepository trendingRepository = context.read();
-    _future = trendingRepository.getMoviesAndSeries(TimeWindow.day);
+    _future = trendingRepository.getMoviesAndSeries(_timeWindow);
   }
 
   @override
@@ -32,17 +33,39 @@ class _TrendingListState extends State<TrendingList> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(
+        Padding(
+          padding: const EdgeInsets.only(
             top: 16,
             left: 16,
+            right: 16,
           ),
-          child: Text(
-            'TRENDING',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
+          child: Row(children: [
+            const Text(
+              'TRENDING',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
+            const Spacer(),
+            DropdownButton<TimeWindow>(
+              value: _timeWindow,
+              items: const [
+                DropdownMenuItem(
+                    value: TimeWindow.day, child: Text('Last 24h')),
+                DropdownMenuItem(
+                    value: TimeWindow.week, child: Text('Last week')),
+              ],
+              onChanged: ((value) => setState(
+                    () {
+                      if (value != null) {
+                        _timeWindow = value;
+                        _future =
+                            trendingRepository.getMoviesAndSeries(_timeWindow);
+                      }
+                    },
+                  )),
+            )
+          ]),
         ),
         const SizedBox(height: 20),
         AspectRatio(
@@ -50,9 +73,9 @@ class _TrendingListState extends State<TrendingList> {
           child: LayoutBuilder(
             builder: (_, constraints) {
               final width = constraints.maxHeight * 0.65;
-              return SizedBox(
-                height: 200,
+              return Center(
                 child: FutureBuilder<EitherListMedia>(
+                  key: ValueKey(_future),
                   future: _future,
                   builder: ((context, snapshot) {
                     if (!snapshot.hasData ||
