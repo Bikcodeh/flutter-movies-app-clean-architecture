@@ -35,3 +35,15 @@ enum MediaType {
   @JsonValue('tv')
   tv,
 }
+
+List<Media> getMediaList(List json) {
+  return json
+      .where(
+        (e) =>
+            e['media_type'] != 'person' &&
+            e['poster_path'] != null &&
+            e['backdrop_path'] != null,
+      )
+      .map((e) => Media.fromJson(e))
+      .toList();
+}

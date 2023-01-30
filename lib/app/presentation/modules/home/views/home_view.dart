@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/trending_list.dart';
+import '../widgets/movies_and_series/trending_list.dart';
+import '../widgets/performers/trending_performers.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -12,6 +13,7 @@ class HomeView extends StatelessWidget {
         child: Column(
           children: const [
             TrendingList(),
+            TrendingPerformers(),
           ],
         ),
       ),
