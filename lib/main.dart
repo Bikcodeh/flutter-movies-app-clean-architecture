@@ -10,6 +10,7 @@ void main() {
       providers: [
         ProviderFactory.provideAuthenticationRepository(),
         ProviderFactory.provideConnectivityRepository(),
+        ProviderFactory.provideTrendingRepository(),
         ProviderFactory.provideSessionControllerNotifier(),
       ],
       child: const MoviesApp(),

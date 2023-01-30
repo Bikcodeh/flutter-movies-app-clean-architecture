@@ -5,7 +5,7 @@ void printLogs(Map<String, dynamic> logs, StackTrace? stackTrace) {
     log(
       '''
 🔥------------------------------------------------------
-    ${const JsonEncoder.withIndent(' ').convert(logs)}
+    ${const JsonEncoder.withIndent('    ').convert(logs)}
 🔥------------------------------------------------------
 ''',
       stackTrace: stackTrace,
