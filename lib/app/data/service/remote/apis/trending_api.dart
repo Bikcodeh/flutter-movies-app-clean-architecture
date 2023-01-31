@@ -26,15 +26,24 @@ class TrendingApi {
   Future<Either<HttpFailure, List<Performer>>> getPerformers(
     TimeWindow timeWindow,
   ) async {
-    return await _http.request(
+    final result = await _http.request(
       '/trending/person/${timeWindow.name}',
       onSuccess: (json) {
         final list = List<Json>.from(json['results']);
         return list
-            .where((e) => e['known_for_department'] == 'Acting')
+            .where(
+              (e) =>
+                  e['known_for_department'] == 'Acting' &&
+                  e['profile_path'] != null,
+            )
             .map((e) => Performer.fromJson(e))
             .toList();
       },
     );
+    return result.when(left: (error) {
+      return Either.left(error);
+    }, right: (list) {
+      return Either.right(list);
+    });
   }
 }

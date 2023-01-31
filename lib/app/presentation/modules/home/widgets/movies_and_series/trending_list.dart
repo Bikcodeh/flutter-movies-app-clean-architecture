@@ -6,6 +6,7 @@ import '../../../../../domain/common/failure/http/http_failure.dart';
 import '../../../../../domain/enums.dart';
 import '../../../../../domain/models/media/media.dart';
 import '../../../../../domain/repository/trending_repository.dart';
+import '../../../../global/widgets/request_failed.dart';
 import 'trending_tile.dart';
 import 'trending_title_and_filter.dart';
 
@@ -29,6 +30,12 @@ class _TrendingListState extends State<TrendingList> {
     _future = trendingRepository.getMoviesAndSeries(_timeWindow);
   }
 
+  void updateFuture(TimeWindow timeWindow) {
+    setState(() {
+      _future = trendingRepository.getMoviesAndSeries(timeWindow);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,7 +51,7 @@ class _TrendingListState extends State<TrendingList> {
             timeWindow: _timeWindow,
             onTimeWindowChange: (newTimeWindow) => setState(() {
               _timeWindow = newTimeWindow;
-              _future = trendingRepository.getMoviesAndSeries(_timeWindow);
+              updateFuture(_timeWindow);
             }),
           ),
         ),
@@ -64,7 +71,11 @@ class _TrendingListState extends State<TrendingList> {
                       return const CircularProgressIndicator();
                     }
                     return snapshot.data!.when(
-                      left: (failure) => Text(failure.toString()),
+                      left: (failure) => Center(
+                        child: RequestFailed(onRetry: () {
+                          updateFuture(_timeWindow);
+                        }),
+                      ),
                       right: (items) {
                         return Center(
                           child: ListView.separated(
