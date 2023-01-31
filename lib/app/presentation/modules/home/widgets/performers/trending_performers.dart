@@ -5,6 +5,7 @@ import '../../../../../domain/common/either/either.dart';
 import '../../../../../domain/common/failure/http/http_failure.dart';
 import '../../../../../domain/models/performer/performer.dart';
 import '../../../../../domain/repository/trending_repository.dart';
+import '../../../../global/widgets/request_failed.dart';
 import 'perform_tile.dart';
 
 typedef EitherPerformerList = Either<HttpFailure, List<Performer>>;
@@ -49,7 +50,14 @@ class _TrendingPerformersState extends State<TrendingPerformers> {
           }
           return snapshot.data!.when(
             left: (_) {
-              return const Text('Error');
+              return Center(
+                child: RequestFailed(onRetry: () {
+                  setState(() {
+                    _future =
+                        context.read<TrendingRepository>().getPerformers();
+                  });
+                }),
+              );
             },
             right: (performers) {
               return Stack(

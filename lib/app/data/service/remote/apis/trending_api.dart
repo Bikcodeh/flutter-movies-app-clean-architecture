@@ -30,8 +30,6 @@ class TrendingApi {
       '/trending/person/${timeWindow.name}',
       onSuccess: (json) {
         final list = List<Json>.from(json['results']);
-        print('🤡 DATA DATA ******** ${list.toString()}}');
-        print('🤡 DATA DATA ******** ${list[1]['known_for'].toString()}}');
         return list
             .where(
               (e) =>
