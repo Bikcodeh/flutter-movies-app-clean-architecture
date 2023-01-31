@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../domain/models/performer/performer.dart';
 import '../../../../global/utils/utils.dart';
+import '../movies_and_series/trending_tile.dart';
 
 class PerformerTile extends StatelessWidget {
   const PerformerTile({
@@ -33,7 +34,7 @@ class PerformerTile extends StatelessWidget {
               right: 0,
               left: 0,
               child: Container(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(14).copyWith(bottom: 40),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -55,6 +56,24 @@ class PerformerTile extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    const SizedBox(height: 10),
+                    if (performer.knownFor.isNotEmpty)
+                      SizedBox(
+                        height: 150,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: performer.knownFor
+                              .take(3)
+                              .map(
+                                (media) => TrendingTile(
+                                  media: media,
+                                  width: 120 * 0.7,
+                                  showData: false,
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      )
                   ],
                 ),
               ),
