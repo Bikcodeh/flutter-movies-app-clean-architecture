@@ -144,3 +144,5 @@ app.*.symbols
 !/dev/ci/**/Gemfile.lock
 *.g.dart
 *.freezed.dart
+
+lib/app/generated
