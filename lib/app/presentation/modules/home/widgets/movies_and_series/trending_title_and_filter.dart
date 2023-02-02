@@ -33,9 +33,13 @@ class TrendingTitleAndFilter extends StatelessWidget {
               value: timeWindow,
               items: const [
                 DropdownMenuItem(
-                    value: TimeWindow.day, child: Text('Last 24h')),
+                  value: TimeWindow.day,
+                  child: Text('Last 24h'),
+                ),
                 DropdownMenuItem(
-                    value: TimeWindow.week, child: Text('Last week')),
+                  value: TimeWindow.week,
+                  child: Text('Last week'),
+                ),
               ],
               onChanged: ((newTimeWindow) {
                 if (newTimeWindow != null && timeWindow != newTimeWindow) {
