@@ -5,8 +5,8 @@ import '../../../../../domain/common/either/either.dart';
 import '../../../../../domain/common/failure/http/http_failure.dart';
 import '../../../../../domain/enums.dart';
 import '../../../../../domain/models/media/media.dart';
-import '../../../../../domain/repository/trending_repository.dart';
 import '../../../../global/widgets/request_failed.dart';
+import '../../controller/home_controller.dart';
 import 'trending_tile.dart';
 import 'trending_title_and_filter.dart';
 
@@ -20,24 +20,11 @@ class TrendingList extends StatefulWidget {
 }
 
 class _TrendingListState extends State<TrendingList> {
-  late Future<EitherListMedia> _future;
   TimeWindow _timeWindow = TimeWindow.day;
-  TrendingRepository get trendingRepository => context.read();
-
-  @override
-  void initState() {
-    super.initState();
-    _future = trendingRepository.getMoviesAndSeries(_timeWindow);
-  }
-
-  void updateFuture(TimeWindow timeWindow) {
-    setState(() {
-      _future = trendingRepository.getMoviesAndSeries(timeWindow);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = context.watch();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -51,7 +38,8 @@ class _TrendingListState extends State<TrendingList> {
             timeWindow: _timeWindow,
             onTimeWindowChange: (newTimeWindow) => setState(() {
               _timeWindow = newTimeWindow;
-              updateFuture(_timeWindow);
+              homeController.set(_timeWindow);
+              homeController.fetch();
             }),
           ),
         ),
@@ -59,47 +47,41 @@ class _TrendingListState extends State<TrendingList> {
         AspectRatio(
           aspectRatio: 16 / 8,
           child: LayoutBuilder(
-            builder: (_, constraints) {
+            builder: (context, constraints) {
               final width = constraints.maxHeight * 0.65;
               return Center(
-                child: FutureBuilder<EitherListMedia>(
-                  key: ValueKey(_future),
-                  future: _future,
-                  builder: ((context, snapshot) {
-                    if (!snapshot.hasData ||
-                        snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    }
-                    return snapshot.data!.when(
-                      left: (failure) => Center(
-                        child: RequestFailed(onRetry: () {
-                          updateFuture(_timeWindow);
-                        }),
+                  child: homeController.state.when(
+                error: () => RequestFailed(onRetry: () {
+                  homeController.fetch();
+                }),
+                idle: () => const SizedBox(),
+                loading: (isLoading) {
+                  if (isLoading) {
+                    return const CircularProgressIndicator();
+                  }
+                  return null;
+                },
+                success: (data) {
+                  return Center(
+                    child: ListView.separated(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
                       ),
-                      right: (items) {
-                        return Center(
-                          child: ListView.separated(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                            ),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: items.length,
-                            itemBuilder: ((_, index) {
-                              final item = items[index];
-                              return TrendingTile(media: item, width: width);
-                            }),
-                            separatorBuilder: (_, __) {
-                              return const SizedBox(
-                                width: 10,
-                              );
-                            },
-                          ),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: data.length,
+                      itemBuilder: ((_, index) {
+                        final item = data[index];
+                        return TrendingTile(media: item, width: width);
+                      }),
+                      separatorBuilder: (_, __) {
+                        return const SizedBox(
+                          width: 10,
                         );
                       },
-                    );
-                  }),
-                ),
-              );
+                    ),
+                  );
+                },
+              ));
             },
           ),
         )
