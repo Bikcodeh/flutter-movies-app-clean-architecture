@@ -5,15 +5,18 @@ import 'package:provider/provider.dart';
 
 import '../../domain/repository/authentication_repository.dart';
 import '../../domain/repository/connectivity_repository.dart';
+import '../../domain/repository/movie_repository.dart';
 import '../../domain/repository/trending_repository.dart';
 import '../../presentation/global/controllers/session_controller.dart';
 import '../repository/account_repository_impl.dart';
 import '../repository/authentication_repository_impl.dart';
 import '../repository/connectivity_repository_impl.dart';
+import '../repository/movie_repository_impl.dart';
 import '../repository/trending_repository_impl.dart';
 import '../service/local/session_service.dart';
 import '../service/remote/apis/account_api.dart';
 import '../service/remote/apis/authentication_api.dart';
+import '../service/remote/apis/movie_api.dart';
 import '../service/remote/apis/trending_api.dart';
 import '../service/remote/http/network.dart';
 import '../service/remote/internet_checker.dart';
@@ -54,6 +57,14 @@ class ProviderFactory {
     return Provider<TrendingRepository>(
       create: (context) => TrendingRepositoryImpl(
         TrendingApi(_http),
+      ),
+    );
+  }
+
+  static Provider provideMovieRepository() {
+    return Provider<MovieRepository>(
+      create: (context) => MovieRepositoryImpl(
+        MovieApi(_http),
       ),
     );
   }

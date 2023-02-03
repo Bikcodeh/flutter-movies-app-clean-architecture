@@ -12,6 +12,7 @@ void main() {
         ProviderFactory.provideConnectivityRepository(),
         ProviderFactory.provideTrendingRepository(),
         ProviderFactory.provideSessionControllerNotifier(),
+        ProviderFactory.provideMovieRepository(),
       ],
       child: const MoviesApp(),
     ),
