@@ -39,7 +39,7 @@ class _TrendingListState extends State<TrendingList> {
             onTimeWindowChange: (newTimeWindow) => setState(() {
               _timeWindow = newTimeWindow;
               homeController.set(_timeWindow);
-              homeController.fetch();
+              homeController.getMoviesAndSeries();
             }),
           ),
         ),
@@ -50,11 +50,10 @@ class _TrendingListState extends State<TrendingList> {
             builder: (context, constraints) {
               final width = constraints.maxHeight * 0.65;
               return Center(
-                  child: homeController.state.when(
+                  child: homeController.state.moviesAndSeries.when(
                 error: () => RequestFailed(onRetry: () {
-                  homeController.fetch();
+                  homeController.getMoviesAndSeries();
                 }),
-                idle: () => const SizedBox(),
                 loading: (isLoading) {
                   if (isLoading) {
                     return const CircularProgressIndicator();

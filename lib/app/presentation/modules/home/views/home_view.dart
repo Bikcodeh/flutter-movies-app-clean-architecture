@@ -14,10 +14,10 @@ class HomeView extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) {
         final controller = HomeController(
-          HomeState.idle(),
+          HomeState(),
           trendingRepository: context.read(),
         );
-        controller.fetch();
+        controller.init();
         return controller;
       },
       child: Scaffold(
@@ -25,7 +25,7 @@ class HomeView extends StatelessWidget {
           child: LayoutBuilder(
             builder: (context, constraints) {
               return RefreshIndicator(
-                onRefresh: context.read<HomeController>().fetch,
+                onRefresh: context.read<HomeController>().init,
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: SizedBox(

@@ -16,15 +16,38 @@ class HomeController extends StateNotifier<HomeState> {
 
   final TrendingRepository trendingRepository;
 
-  Future<void> fetch() async {
-    update(HomeState.loading(true));
+  Future<void> init() async {
+    await getMoviesAndSeries();
+    await getPerformers();
+  }
+
+  Future<void> getMoviesAndSeries() async {
+    state = state.copyWith(
+        moviesAndSeries: const MoviesAndSeriesState.loading(true));
     final result = await trendingRepository.getMoviesAndSeries(timeWindow);
     result.when(left: (failure) {
-      update(HomeState.loading(false));
-      update(HomeState.error());
+      state = state.copyWith(
+          moviesAndSeries: const MoviesAndSeriesState.loading(false));
+
+      state =
+          state.copyWith(moviesAndSeries: const MoviesAndSeriesState.error());
     }, right: (data) {
-      update(HomeState.loading(false));
-      update(HomeState.success(data));
+      state = state.copyWith(
+          moviesAndSeries: const MoviesAndSeriesState.loading(false));
+      state =
+          state.copyWith(moviesAndSeries: MoviesAndSeriesState.success(data));
+    });
+  }
+
+  Future<void> getPerformers() async {
+    state = state.copyWith(performers: const PerformersState.loading(true));
+    final result = await trendingRepository.getPerformers();
+    result.when(left: (failure) {
+      state = state.copyWith(performers: const PerformersState.loading(false));
+      state = state.copyWith(performers: const PerformersState.failed());
+    }, right: (data) {
+      state = state.copyWith(performers: const PerformersState.loading(false));
+      state = state.copyWith(performers: PerformersState.success(data));
     });
   }
 }
