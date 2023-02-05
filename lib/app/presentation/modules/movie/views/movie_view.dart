@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../global/widgets/request_failed.dart';
 import '../controller/movie_controller.dart';
 import '../controller/state/movie_state.dart';
+import '../widgets/movie_app_bar.dart';
 import '../widgets/movie_content.dart';
 
 class MovieView extends StatelessWidget {
@@ -15,7 +16,7 @@ class MovieView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => MovieController(
-        MovieState.loading(),
+        const MovieState.loading(),
         movieRepository: context.read(),
       )..getMovieById(movieid),
       builder: (context, _) {
@@ -29,16 +30,7 @@ class MovieView extends StatelessWidget {
             ),
             success: (movie) => Scaffold(
               extendBodyBehindAppBar: true,
-              appBar: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                actions: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.favorite_border_outlined),
-                  )
-                ],
-              ),
+              appBar: const MovieAppBar(),
               body: MovieContent(movie: movie),
             ),
           ),

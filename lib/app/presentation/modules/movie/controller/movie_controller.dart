@@ -10,7 +10,7 @@ class MovieController extends StateNotifier<MovieState> {
     final result = await movieRepository.getMovieById(id);
 
     state = result.when(
-        left: (_) => MovieState.error(),
+        left: (_) => const MovieState.error(),
         right: (movie) => MovieState.success(movie));
   }
 }

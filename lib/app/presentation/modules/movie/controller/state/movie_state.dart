@@ -6,7 +6,7 @@ part 'movie_state.freezed.dart';
 
 @freezed
 class MovieState with _$MovieState {
-  factory MovieState.loading() = MovieStateLoading;
-  factory MovieState.error() = MovieStateError;
-  factory MovieState.success(Movie movie) = MovieStateSuccess;
+  const factory MovieState.loading() = MovieStateLoading;
+  const factory MovieState.error() = MovieStateError;
+  const factory MovieState.success(Movie movie) = MovieStateSuccess;
 }
