@@ -16,7 +16,7 @@ class MovieView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => MovieController(
-        MovieState.loading(),
+        const MovieState.loading(),
         movieRepository: context.read(),
       )..getMovieById(movieid),
       builder: (context, _) {

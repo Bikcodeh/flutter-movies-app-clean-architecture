@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../domain/models/movie/movie.dart';
+import 'movie_cast.dart';
 import 'movie_header.dart';
 
 class MovieContent extends StatelessWidget {
@@ -17,7 +18,8 @@ class MovieContent extends StatelessWidget {
             padding:
                 const EdgeInsets.symmetric(horizontal: 16).copyWith(top: 16),
             child: Text(movie.overview),
-          )
+          ),
+          MovieCast(movieId: movie.id),
         ],
       ),
     );
