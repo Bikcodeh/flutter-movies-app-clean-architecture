@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/repository/account_repository.dart';
 import '../../domain/repository/authentication_repository.dart';
 import '../../domain/repository/connectivity_repository.dart';
 import '../../domain/repository/movie_repository.dart';
@@ -34,7 +35,10 @@ class ProviderFactory {
     client: Client(),
   );
 
-  static final AccountApi _accountApi = AccountApi(_http);
+  static final AccountApi _accountApi = AccountApi(
+    _http,
+    _sessionService,
+  );
 
   static Provider provideAuthenticationRepository() {
     return Provider<AuthenticationRepository>(
@@ -43,6 +47,12 @@ class ProviderFactory {
         AuthenticationApi(_http),
         AccountRepositoryImpl(_accountApi, _sessionService),
       ),
+    );
+  }
+
+  static Provider provideAccountRepository() {
+    return Provider<AccountRepository>(
+      create: (context) => AccountRepositoryImpl(_accountApi, _sessionService),
     );
   }
 
@@ -81,7 +91,10 @@ class ProviderFactory {
 
   static ChangeNotifierProvider provideFavoritesControllerNotifier() {
     return ChangeNotifierProvider<FavoritesController>(
-      create: (context) => FavoritesController(FavoritesState.loading()),
+      create: (context) => FavoritesController(
+        FavoritesState.loading(),
+        accountRepository: context.read(),
+      ),
     );
   }
 }

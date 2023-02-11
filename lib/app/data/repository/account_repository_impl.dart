@@ -1,3 +1,6 @@
+import '../../domain/common/either/either.dart';
+import '../../domain/common/failure/http/http_failure.dart';
+import '../../domain/models/media/media.dart';
 import '../../domain/models/user/user.dart';
 import '../../domain/repository/account_repository.dart';
 import '../service/local/session_service.dart';
@@ -12,6 +15,18 @@ class AccountRepositoryImpl implements AccountRepository {
   @override
   Future<User?> getUserData() async {
     final sessionId = await _sessionService.getSessionId();
-    return _accountApi.getAcccount(sessionId ?? '');
+    final user = await _accountApi.getAcccount(sessionId ?? '');
+
+    if (user != null) {
+      _sessionService.saveAccountId(user.id.toString());
+    }
+
+    return user;
+  }
+
+  @override
+  Future<Either<HttpFailure, Map<int, Media>>> getFavorites(
+      MediaType mediaType) {
+    return _accountApi.getFavorites(mediaType);
   }
 }
