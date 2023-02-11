@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../global/controllers/favorites/favorites_controller.dart';
 import '../../../global/widgets/request_failed.dart';
 import '../controller/movie_controller.dart';
 import '../controller/state/movie_state.dart';
@@ -21,6 +22,7 @@ class MovieView extends StatelessWidget {
       )..getMovieById(movieid),
       builder: (context, _) {
         final MovieController movieController = context.watch();
+        context.read<FavoritesController>().getMoviesAndSeries();
         return SafeArea(
           child: movieController.state.when(
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -30,7 +32,7 @@ class MovieView extends StatelessWidget {
             ),
             success: (movie) => Scaffold(
               extendBodyBehindAppBar: true,
-              appBar: const MovieAppBar(),
+              appBar: MovieAppBar(movieId: movie.id),
               body: MovieContent(movie: movie),
             ),
           ),

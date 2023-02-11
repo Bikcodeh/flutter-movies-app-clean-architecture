@@ -13,6 +13,8 @@ void main() {
         ProviderFactory.provideTrendingRepository(),
         ProviderFactory.provideSessionControllerNotifier(),
         ProviderFactory.provideMovieRepository(),
+        ProviderFactory.provideAccountRepository(),
+        ProviderFactory.provideFavoritesControllerNotifier(),
       ],
       child: const MoviesApp(),
     ),
