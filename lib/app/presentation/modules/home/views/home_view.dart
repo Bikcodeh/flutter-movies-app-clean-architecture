@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../routes/routes.dart';
 import '../controller/home_controller.dart';
 import '../controller/state/home_state.dart';
 import '../widgets/movies_and_series/trending_list.dart';
@@ -21,6 +22,28 @@ class HomeView extends StatelessWidget {
         return controller;
       },
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0.5,
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, Routes.favorite);
+              },
+              icon: const Icon(
+                Icons.favorite,
+                color: Colors.black,
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.person,
+                color: Colors.black,
+              ),
+            )
+          ],
+        ),
         body: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
