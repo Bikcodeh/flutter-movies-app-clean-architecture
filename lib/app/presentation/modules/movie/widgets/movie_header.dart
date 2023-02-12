@@ -53,16 +53,24 @@ class MovieHeader extends StatelessWidget {
                     Wrap(
                       spacing: 10,
                       children: movie.genres
-                          .map((e) => Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 5,
-                                ),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(color: Colors.white)),
-                                child: Text(
-                                  e.name,
-                                  style: const TextStyle(color: Colors.white),
+                          .map((e) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Container(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(color: Colors.white)),
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 4),
+                                    child: Text(
+                                      e.name,
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ),
                                 ),
                               ))
                           .toList(),
