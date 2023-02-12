@@ -38,7 +38,10 @@ class AccountApi {
       onSuccess: (json) {
         final list = json['results'] as List;
         final iterable = list.map((e) {
-          final media = Media.fromJson(e);
+          final media = Media.fromJson({
+            ...e,
+            'media_type': mediaType.name,
+          });
           return MapEntry(media.id, media);
         });
         final map = <int, Media>{};
