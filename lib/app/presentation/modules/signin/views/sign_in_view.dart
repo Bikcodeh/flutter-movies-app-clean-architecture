@@ -15,6 +15,7 @@ class SignInView extends StatelessWidget {
       create: (_) => SignInController(
         const SignInState(),
         authenticationRepository: context.read(),
+        sessionController: context.read(),
       ),
       child: Scaffold(
         body: SafeArea(

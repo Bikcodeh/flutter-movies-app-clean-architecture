@@ -3,13 +3,19 @@ import 'dart:async';
 import '../../../../domain/common/failure/sign_in_failure.dart';
 import '../../../../domain/repository/authentication_repository.dart';
 import '../../../global/base/state_notifier.dart';
+import '../../../global/controllers/session_controller.dart';
 import 'state/sign_in_state.dart';
 
 class SignInController extends StateNotifier<SignInState> {
   bool _mounted = true;
   final AuthenticationRepository authenticationRepository;
+  final SessionController sessionController;
 
-  SignInController(super.state, {required this.authenticationRepository});
+  SignInController(
+    super.state, {
+    required this.sessionController,
+    required this.authenticationRepository,
+  });
 
   @override
   bool get mounted => _mounted;
@@ -38,6 +44,7 @@ class SignInController extends StateNotifier<SignInState> {
         ),
       );
     }, right: (user) {
+      sessionController.setUser(user);
       update(
         state.copyWith(
           fetching: false,
