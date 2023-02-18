@@ -1,3 +1,5 @@
+import '../../../../domain/common/either/either.dart';
+import '../../../../domain/common/failure/http/http_failure.dart';
 import '../../../../domain/models/media/media.dart';
 import '../../../../domain/repository/account_repository.dart';
 import '../../base/state_notifier.dart';
@@ -22,29 +24,30 @@ class FavoritesController extends StateNotifier<FavoritesState> {
         });
   }
 
-  markAsFavorite(Media media) async {
-    state.mapOrNull(success: (loadedState) async {
-      final isMovie = media.type == MediaType.movie;
-      final map = isMovie ? {...loadedState.movies} : {...loadedState.series};
+  Future<Either<HttpFailure, void>> markAsFavorite(Media media) async {
+    assert(state is FavoritesStateSuccess);
+    final loadedState = state as FavoritesStateSuccess;
+    final isMovie = media.type == MediaType.movie;
+    final map = isMovie ? {...loadedState.movies} : {...loadedState.series};
 
-      final isFavorite = !map.keys.contains(media.id);
+    final isFavorite = !map.keys.contains(media.id);
 
-      final result = await accountRepository.markAsFavorite(
-        mediaId: media.id,
-        mediaType: media.type!,
-        favorite: !isFavorite,
-      );
+    final result = await accountRepository.markAsFavorite(
+      mediaId: media.id,
+      mediaType: media.type!,
+      favorite: isFavorite,
+    );
 
-      result.whenOrNull(right: (_) {
-        if (isFavorite) {
-          map[media.id] = media;
-        } else {
-          map.remove(media.id);
-        }
-        state = isMovie
-            ? loadedState.copyWith(movies: map)
-            : loadedState.copyWith(series: map);
-      });
+    result.whenOrNull(right: (_) {
+      if (isFavorite) {
+        map[media.id] = media;
+      } else {
+        map.remove(media.id);
+      }
+      state = isMovie
+          ? loadedState.copyWith(movies: map)
+          : loadedState.copyWith(series: map);
     });
+    return result;
   }
 }
