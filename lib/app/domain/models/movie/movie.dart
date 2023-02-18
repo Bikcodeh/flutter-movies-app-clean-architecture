@@ -9,6 +9,7 @@ part 'movie.g.dart';
 
 @freezed
 class Movie with _$Movie {
+  const Movie._();
   const factory Movie({
     required int id,
     required List<Genre> genres,
@@ -21,7 +22,6 @@ class Movie with _$Movie {
     @JsonKey(readValue: readOriginalTitleValue) required String originalTitle,
     @JsonKey(name: 'backdrop_path') required String? backdropPath,
   }) = _Movie;
-  const Movie._();
 
   factory Movie.fromJson(Json json) => _$MovieFromJson(json);
 

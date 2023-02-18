@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../global/controllers/favorites/favorites_controller.dart';
 import '../../../global/widgets/request_failed.dart';
 import '../controller/movie_controller.dart';
 import '../controller/state/movie_state.dart';
@@ -16,13 +15,12 @@ class MovieView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => MovieController(
+      create: (context) => MovieController(
         const MovieState.loading(),
         movieRepository: context.read(),
       )..getMovieById(movieid),
       builder: (context, _) {
-        final MovieController movieController = context.watch();
-        context.read<FavoritesController>().getMoviesAndSeries();
+        MovieController movieController = context.watch();
         return SafeArea(
           child: movieController.state.when(
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -32,7 +30,7 @@ class MovieView extends StatelessWidget {
             ),
             success: (movie) => Scaffold(
               extendBodyBehindAppBar: true,
-              appBar: MovieAppBar(movieId: movie.id),
+              appBar: MovieAppBar(movie: movie),
               body: MovieContent(movie: movie),
             ),
           ),
