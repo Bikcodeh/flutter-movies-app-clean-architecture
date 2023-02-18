@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../domain/models/movie/movie.dart';
 import '../../../global/controllers/favorites/favorites_controller.dart';
+import '../../../global/utils/mark_as_favorite.dart';
 import '../controller/movie_controller.dart';
 
 class MovieAppBar extends StatelessWidget with PreferredSizeWidget {
@@ -22,10 +23,11 @@ class MovieAppBar extends StatelessWidget with PreferredSizeWidget {
                   favoritesController.state.maybeMap(
                     orElse: () => const SizedBox(),
                     success: (favoritesState) => IconButton(
-                      onPressed: () {
-                        favoritesController
-                            .markAsFavorite(moviesState.movie.toMedia());
-                      },
+                      onPressed: () => markAsFavorite(
+                        context: context,
+                        media: moviesState.movie.toMedia(),
+                        mounted: () => movieController.mounted,
+                      ),
                       icon: Icon(
                         favoritesState.movies.containsKey(moviesState.movie.id)
                             ? Icons.favorite
