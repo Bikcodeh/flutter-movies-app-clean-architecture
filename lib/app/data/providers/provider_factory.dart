@@ -11,6 +11,7 @@ import '../../domain/repository/trending_repository.dart';
 import '../../presentation/global/controllers/favorites/favorites_controller.dart';
 import '../../presentation/global/controllers/favorites/state/favorites_state.dart';
 import '../../presentation/global/controllers/session_controller.dart';
+import '../../presentation/global/controllers/theme_controller.dart';
 import '../repository/account_repository_impl.dart';
 import '../repository/authentication_repository_impl.dart';
 import '../repository/connectivity_repository_impl.dart';
@@ -86,6 +87,12 @@ class ProviderFactory {
       create: (context) => SessionController(
         authenticationRepository: context.read(),
       ),
+    );
+  }
+
+  static ChangeNotifierProvider provideThemeControllerNotifier() {
+    return ChangeNotifierProvider<ThemeController>(
+      create: (context) => ThemeController(false),
     );
   }
 

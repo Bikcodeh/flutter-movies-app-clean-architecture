@@ -36,7 +36,9 @@ class HomeView extends StatelessWidget {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, Routes.profile);
+              },
               icon: const Icon(
                 Icons.person,
                 color: Colors.black,
