@@ -15,6 +15,7 @@ void main() {
         ProviderFactory.provideMovieRepository(),
         ProviderFactory.provideAccountRepository(),
         ProviderFactory.provideFavoritesControllerNotifier(),
+        ProviderFactory.provideThemeControllerNotifier(),
       ],
       child: const MoviesApp(),
     ),
