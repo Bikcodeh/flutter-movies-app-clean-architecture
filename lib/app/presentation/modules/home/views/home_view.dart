@@ -23,7 +23,6 @@ class HomeView extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
           elevation: 0.5,
           actions: [
             IconButton(
@@ -32,7 +31,6 @@ class HomeView extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.favorite,
-                color: Colors.black,
               ),
             ),
             IconButton(
@@ -41,7 +39,6 @@ class HomeView extends StatelessWidget {
               },
               icon: const Icon(
                 Icons.person,
-                color: Colors.black,
               ),
             )
           ],

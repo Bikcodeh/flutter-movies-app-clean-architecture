@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../domain/enums.dart';
+import '../../../../global/colors.dart';
+import '../../../../global/extensions/build_context_ext.dart';
 
 class TrendingTitleAndFilter extends StatelessWidget {
   const TrendingTitleAndFilter({
@@ -24,7 +26,7 @@ class TrendingTitleAndFilter extends StatelessWidget {
       ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          color: Colors.grey.shade200,
+          color: context.darkMode ? AppColors.darkLight : Colors.grey.shade200,
           child: Padding(
             padding: const EdgeInsets.only(left: 8),
             child: DropdownButton<TimeWindow>(

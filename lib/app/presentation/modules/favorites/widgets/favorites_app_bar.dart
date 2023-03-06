@@ -8,7 +8,6 @@ class FavoritesAppBar extends StatelessWidget with PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: const Text('Favorites'),
-      elevation: 0.5,
       bottom: TabBar(
         tabs: const [
           Tab(
